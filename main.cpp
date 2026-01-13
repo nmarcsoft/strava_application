@@ -23,6 +23,9 @@ int main(void) {
     host_url = "localhost";
   }
 
+  cout << "redirect_uri = " << redirect_uri << " and host_url = " << host_url
+       << endl;
+
   httplib::Server server;
 
   StravaAuthController auth(stoi(client_id), client_secret, redirect_uri);
