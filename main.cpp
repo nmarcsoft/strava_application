@@ -13,9 +13,15 @@ int main(void) {
   std::string client_id = getenv("CLIENT_ID");
   std::string client_secret = getenv("CLIENT_SECRET");
   const char *redirect_env = getenv("REDIRECT_URI");
-  std::string redirect_uri =
-      redirect_env ? redirect_env : "http://localhost:8080/auth/callback";
-  std::string host_url = redirect_env ? "0.0.0.0" : "localhost";
+  std::string redirect_uri, host_url;
+
+  if (redirect_env) {
+    redirect_uri = redirect_env;
+    host_url = "0.0.0.0";
+  } else {
+    redirect_uri = "http://localhost:8080/auth/callback";
+    host_url = "localhost";
+  }
 
   httplib::Server server;
 
