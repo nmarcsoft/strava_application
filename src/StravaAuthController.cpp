@@ -117,6 +117,6 @@ std::string StravaAuthController::build_authorization_url() const {
          std::to_string(client_id_) +
          "&response_type=code"
          "&redirect_uri=" +
-         "https://https://strava-application.onrender.com/auth/callback" +
+         "https://strava-application.onrender.com/auth/callback" +
          "&scope=" + scope_;
 }
