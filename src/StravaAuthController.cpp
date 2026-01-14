@@ -60,27 +60,30 @@ void StravaAuthController::register_routes(httplib::Server &server) {
                logger.log(DEBUG, "[AUTH] : Done for /auth/login");
              });
 
-  server.Get("/auth/callback",
-             [&](const httplib::Request &req, httplib::Response &res) {
-               if (!req.has_param("code")) {
-                 res.status = 400;
-                 res.set_content("Missing authorization code", "text/plain");
-                 return;
-               }
+  server.Get("/auth/callback", [&](const httplib::Request &req,
+                                   httplib::Response &res) {
+    res.set_header("Access-Control-Allow-Origin",
+                   "https://stravanalytics-front-end.onrender.com");
+    if (!req.has_param("code")) {
+      res.status = 400;
+      res.set_content("Missing authorization code", "text/plain");
+      return;
+    }
 
-               std::string code = req.get_param_value("code");
-               this->code_ = code;
+    std::string code = req.get_param_value("code");
+    this->code_ = code;
 
-               exchange_code_for_token();
-               ConnectionManager Connector(this->access_token_);
-               Connector.execute();
+    exchange_code_for_token();
+    ConnectionManager Connector(this->access_token_);
+    Connector.execute();
 
-               analyzer.set_up();
-               analyzer.extract();
+    analyzer.set_up();
+    analyzer.extract();
 
-               // Pour l'instant, redirection vers Vue
-               res.set_redirect("http://localhost:5173/dashboard");
-             });
+    // Pour l'instant, redirection vers Vue
+    // TODO : Faire plus propre (var env)
+    res.set_redirect("https://stravanalytics-front-end.onrender.com/dashboard");
+  });
 
   server.Get(
       "/api/activities", [&](const httplib::Request &, httplib::Response &res) {
@@ -114,5 +117,6 @@ std::string StravaAuthController::build_authorization_url() const {
          std::to_string(client_id_) +
          "&response_type=code"
          "&redirect_uri=" +
-         redirect_uri_ + "&scope=" + scope_;
+         "https://https://strava-application.onrender.com/auth/callback" +
+         "&scope=" + scope_;
 }
